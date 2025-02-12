@@ -254,15 +254,23 @@ void imgui_builder::form_window_flag( )
 
 	ImGui::SameLine( );
 
+	IGFD::FileDialogConfig config;
+
 	if ( ImGui::Button( "Load" ) )
 	{
-		ImGuiFileDialog::Instance( )->OpenDialog( "OpenFlagsDlgKey", "Open File", ".flags", RegeditGetPath( "ImGuiBuilderPath" ), "style_flags" );
+		config.fileName = "style_flags";
+		config.path = RegeditGetPath("ImGuiBuilderPath");
+
+		ImGuiFileDialog::Instance( )->OpenDialog( "OpenFlagsDlgKey", "Open File", ".flags", config );
 	}
 
 	ImGui::SameLine( );
 	if ( ImGui::Button( "Save" ) )
 	{
-		ImGuiFileDialog::Instance( )->OpenDialog( "SaveFlagsDlgKey", "Save File", ".flags", RegeditGetPath( "ImGuiBuilderPath" ), "style_flags" );
+		config.fileName = "style_flags";
+		config.path = RegeditGetPath("ImGuiBuilderPath");
+
+		ImGuiFileDialog::Instance( )->OpenDialog( "SaveFlagsDlgKey", "Save File", ".flags", config );
 	}
 
 	ImGui::Text( "First" );
@@ -313,8 +321,8 @@ void imgui_builder::form_window_flag( )
 	ImGui::SliderFloat2( "WindowTitleAlign",	reinterpret_cast<float*>( &m_custom_gui_style.WindowTitleAlign ), 0.0f, 1.0f, "%.2f" );
 	auto window_menu_button_position = m_custom_gui_style.WindowMenuButtonPosition + 1;
 	if ( ImGui::Combo( "WindowMenuButtonPosition", static_cast<int*>( &window_menu_button_position ), "None\0Left\0Right\0" ) )
-		m_custom_gui_style.WindowMenuButtonPosition = window_menu_button_position - 1;
-	ImGui::Combo( "ColorButtonPosition",		static_cast<int*>( &m_custom_gui_style.ColorButtonPosition ), "Left\0Right\0" );
+		m_custom_gui_style.WindowMenuButtonPosition = (ImGuiDir)(window_menu_button_position - 1);
+	ImGui::Combo( "ColorButtonPosition",		(int*)&m_custom_gui_style.ColorButtonPosition, "Left\0Right\0");
 	ImGui::SliderFloat2( "ButtonTextAlign",		reinterpret_cast<float*>( &m_custom_gui_style.ButtonTextAlign ), 0.0f, 1.0f, "%.2f" );
 
 	ImGui::SliderFloat2( "SelectableTextAlign", reinterpret_cast<float*>( &m_custom_gui_style.SelectableTextAlign ), 0.0f, 1.0f, "%.2f" );
@@ -343,15 +351,21 @@ void imgui_builder::form_color_editor( )
 	
 	ImGui::SameLine( );
 
+	IGFD::FileDialogConfig config;
+
 	if ( ImGui::Button( "Load" ) )
 	{
-		ImGuiFileDialog::Instance( )->OpenDialog( "OpenColorsDlgKey", "Open File", ".colors", RegeditGetPath( "ImGuiBuilderPath" ), "style_colors" );
+		config.path = RegeditGetPath("ImGuiBuilderPath");
+		config.fileName = "style_colors";
+		ImGuiFileDialog::Instance( )->OpenDialog( "OpenColorsDlgKey", "Open File", ".colors", config );
 	}
 
 	ImGui::SameLine( );
 	if ( ImGui::Button( "Save" ) )
 	{
-		ImGuiFileDialog::Instance( )->OpenDialog( "SaveColorsDlgKey", "Save File", ".colors", RegeditGetPath( "ImGuiBuilderPath" ), "style_colors" );
+		config.path = RegeditGetPath("ImGuiBuilderPath");
+		config.fileName = "style_colors";
+		ImGuiFileDialog::Instance( )->OpenDialog( "SaveColorsDlgKey", "Save File", ".colors", config );
 	}
 	
 
@@ -459,19 +473,30 @@ void imgui_builder::draw( )
 
 		if ( ImGui::BeginMenu( "Project" ) )
 		{
+			IGFD::FileDialogConfig config;
+
 			if ( ImGui::MenuItem( "Save" ) )
 			{
-				ImGuiFileDialog::Instance( )->OpenDialog( "SaveProjectFileDlgKey", "Save File", ".builder", RegeditGetPath( "ImGuiBuilderPath" ), "project" );
+				config.path = RegeditGetPath("ImGuiBuilderPath");
+				config.fileName = "project";
+
+				ImGuiFileDialog::Instance( )->OpenDialog( "SaveProjectFileDlgKey", "Save File", ".builder", config );
 			}
 
 			if ( ImGui::MenuItem( "Open" ) )
 			{
-				ImGuiFileDialog::Instance( )->OpenDialog( "OpenProjectFileDlgKey", "Open File", ".builder", RegeditGetPath( "ImGuiBuilderPath" ), "project" );
+				config.path = RegeditGetPath("ImGuiBuilderPath");
+				config.fileName = "project";
+
+				ImGuiFileDialog::Instance( )->OpenDialog( "OpenProjectFileDlgKey", "Open File", ".builder", config );
 			}
 
 			if ( ImGui::MenuItem( "Generate Code" ) )
 			{
-				ImGuiFileDialog::Instance( )->OpenDialog( "GenCodeProjectFileDlgKey", "Open File", ".cpp,.h,.hpp", RegeditGetPath( "ImGuiBuilderPath" ), "imgui_builder" );
+				config.path = RegeditGetPath("ImGuiBuilderPath");
+				config.fileName = "imgui_builder";
+
+				ImGuiFileDialog::Instance( )->OpenDialog( "GenCodeProjectFileDlgKey", "Open File", ".cpp,.h,.hpp", config );
 			}
 
 			ImGui::EndMenu( );

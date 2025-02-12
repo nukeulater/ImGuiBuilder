@@ -2,8 +2,8 @@
 
 #include "the_window.h"
 
-#include "Nuke's Stuff/CommandHandler.h"
-#include "Nuke's Stuff/CommandCollection.h"
+#include "imgui_console/CommandHandler.h"
+#include "imgui_console/CommandCollection.h"
 
 // TODO Singleton
 window* window::window_instance = nullptr;

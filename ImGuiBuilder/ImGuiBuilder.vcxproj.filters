@@ -79,10 +79,11 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="third-party\ImGui\imgui_demo.cpp" />
     <ClCompile Include="third-party\ImGui\imgui_stdlib.cpp" />
-    <ClCompile Include="Nuke%27s Stuff\CommandHandler.cpp" />
-    <ClCompile Include="Nuke%27s Stuff\ImGuiConsoleImpl.cpp" />
+    <ClCompile Include="imgui_console\CommandHandler.cpp" />
+    <ClCompile Include="imgui_console\ImGuiConsoleImpl.cpp" />
     <ClCompile Include="third-party\rapidfuzz\rapidfuzz\details\unicode.cpp" />
-    <ClCompile Include="Nuke%27s Stuff\CommandCollection.cpp" />
+    <ClCompile Include="imgui_console\CommandCollection.cpp" />
+    <ClCompile Include="imgui_console\ComVar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main\imgui_builder.h">
@@ -151,9 +152,9 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="third-party\ImGui\opengl\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="third-party\ImGui\imgui_stdlib.h" />
-    <ClInclude Include="Nuke%27s Stuff\CommandHandler.h" />
-    <ClInclude Include="Nuke%27s Stuff\ImGuiConsoleImpl.h" />
-    <ClInclude Include="Nuke%27s Stuff\CommandsUtil.h" />
+    <ClInclude Include="imgui_console\CommandHandler.h" />
+    <ClInclude Include="imgui_console\ImGuiConsoleImpl.h" />
+    <ClInclude Include="imgui_console\CommandsUtil.h" />
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\details\string_metrics\generic_levenshtein_impl.hpp" />
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\details\string_metrics\jaro_impl.hpp" />
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\details\string_metrics\levenshtein_editops_impl.hpp" />
@@ -175,7 +176,7 @@
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\string_metric.hpp" />
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\utils.hpp" />
     <ClInclude Include="third-party\rapidfuzz\rapidfuzz\utils_impl.hpp" />
-    <ClInclude Include="Nuke%27s Stuff\ComVar.h" />
-    <ClInclude Include="Nuke%27s Stuff\CommandCollection.h" />
+    <ClInclude Include="imgui_console\ComVar.h" />
+    <ClInclude Include="imgui_console\CommandCollection.h" />
   </ItemGroup>
 </Project>

@@ -231,10 +231,10 @@ bool im_config::window_flags::load( const std::string& style, ImGuiStyle& custom
 				custom_gui_style.TabRounding				= std::stof( line );
 				break;
 			case 23:
-				custom_gui_style.WindowMenuButtonPosition	= static_cast<ImGuiDir_>( std::stof( line ) );
+				custom_gui_style.WindowMenuButtonPosition	= static_cast<ImGuiDir>( std::stof( line ) );
 				break;
 			case 24:
-				custom_gui_style.ColorButtonPosition		= static_cast<ImGuiDir_>( std::stof( line ) );
+				custom_gui_style.ColorButtonPosition		= static_cast<ImGuiDir>( std::stof( line ) );
 				break;
 			}
 

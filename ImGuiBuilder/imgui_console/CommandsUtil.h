@@ -1,10 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
-#include "imgui.h"
-#include "CommandHandler.h"
-
 struct StringLineHeader;
 typedef int StringHeaderFlags;
 
@@ -78,15 +73,12 @@ static inline bool tokenize(const char* str, size_t str_length, const char* deli
 			break;
 	}
 
-	if (out.size() <= 0)
-		return false;
-
-	return true;
+	return !out.empty();
 }
 
 struct StringLineHeader
 {
-	int idx;
+	size_t idx;
 	size_t size;
 	StringHeaderFlags flags;
 };
@@ -116,15 +108,21 @@ public:
 		m_line_buf_size = _max_buffer_size_per_line;
 
 		// allocate once we know the size
-		m_buf = new char[GetBufferSize()];
+		m_buf = (char*)malloc(GetBufferSize());
+		memset(m_buf, 0, GetBufferSize());
 		m_buffer_idx = 0;
 		m_strings_headers.reserve(m_line_count);
 	};
 
+	CircularStringBuffer(const CircularStringBuffer& other)
+		: CircularStringBuffer(other.m_line_count, other.m_line_buf_size)
+	{
+	}
+
 	~CircularStringBuffer()
 	{
 		m_strings_headers.clear();
-		delete[] m_buf;
+		free(m_buf);
 		m_buf = NULL;
 		m_buffer_idx = 0;
 	}
@@ -144,12 +142,12 @@ public:
 		m_line_buf_size = newLineBufSize;
 
 		size_t newBufferSize = GetBufferSize();
-		IM_ASSERT(newBufferSize > oldBufferSize);
-		char* new_buffer = (char*)IM_ALLOC(newBufferSize);
+		assert(newBufferSize > oldBufferSize);
+		char* new_buffer = (char*)malloc(newBufferSize);
 		if (m_buf != NULL)
 		{
 			memcpy(new_buffer, m_buf, GetBufferSize());
-			IM_DELETE(m_buf);
+			free(m_buf);
 		}
 		m_buf = new_buffer;
 	}
@@ -166,7 +164,9 @@ public:
 		if (characterCount == 0)
 			characterCount = strnlen_s(source, m_line_buf_size - 1);
 
-		IM_ASSERT(characterCount < m_line_buf_size - 1 || source[characterCount - 1] == '\0');
+		size_t nullCharIdx = characterCount;
+
+		assert(characterCount < m_line_buf_size - 1 || source[nullCharIdx] == '\0');
 
 		char* destinationBuffer;
 		size_t destinationBufferSize = GetNewlineBuffer(m_line_buf_size, &destinationBuffer);
@@ -175,8 +175,7 @@ public:
 		{
 			// position has been updated, copy the source string
 			strncpy_s(destinationBuffer, destinationBufferSize, source, characterCount);
-			destinationBuffer[characterCount] = '\0';
-
+			destinationBuffer[nullCharIdx] = '\0';
 			m_strings_headers.push_back(StringLineHeader{ m_buffer_idx - 1, destinationBufferSize, flags });
 		}
 		else
@@ -191,12 +190,15 @@ public:
 		va_list valist;
 		va_start(valist, fmt);
 		int buffer_size_needed = _vsnprintf(NULL, 0, fmt, valist) + 1;
-		if (buffer_size_needed < m_line_buf_size)
+		if (buffer_size_needed)
 		{
-			char* buffer = (char*)_malloca(buffer_size_needed);
-			int copied_characters = _vsnprintf(buffer, buffer_size_needed, fmt, valist);
-			AddString(flags, buffer, copied_characters);
-			_freea(buffer);
+			if ((size_t)buffer_size_needed < m_line_buf_size)
+			{
+				char* buffer = (char*)_malloca(buffer_size_needed);
+				int copied_characters = _vsnprintf(buffer, buffer_size_needed, fmt, valist);
+				AddString(flags, buffer, copied_characters);
+				_freea(buffer);
+			}
 		}
 		va_end(valist);
 	}
@@ -204,18 +206,21 @@ public:
 	void AddStringFmt(StringHeaderFlags flags, const char* fmt, va_list valist)
 	{
 		int buffer_size_needed = _vsnprintf(NULL, 0, fmt, valist) + 1;
-		if (buffer_size_needed < m_line_buf_size)
+		if (buffer_size_needed)
 		{
-			char* buffer = (char*)_malloca(buffer_size_needed);
-			int copied_characters = _vsnprintf(buffer, buffer_size_needed, fmt, valist);
-			AddString(flags, buffer, copied_characters);
-			_freea(buffer);
+			if ((size_t)buffer_size_needed < m_line_buf_size)
+			{
+				char* buffer = (char*)_malloca(buffer_size_needed);
+				int copied_characters = _vsnprintf(buffer, buffer_size_needed, fmt, valist);
+				AddString(flags, buffer, copied_characters);
+				_freea(buffer);
+			}
 		}
 	}
 
-	const char* GetStringAtIndex(int headerIdx) const
+	const char* GetStringAtIndex(size_t headerIdx) const
 	{
-		assert(headerIdx < GetStringHeaderSize());
+		assert(headerIdx < GetHeaderCount());
 		const StringLineHeader& string_header = GetHeader(headerIdx);
 		return GetStringAtIdx(string_header.idx);
 	}
@@ -235,7 +240,7 @@ public:
 		return m_strings_headers.at(headerIdx);
 	}
 
-	size_t GetStringHeaderSize() const
+	size_t GetHeaderCount() const
 	{
 		return m_strings_headers.size();
 	}
@@ -246,13 +251,13 @@ private:
 
 	// buffer details
 	// current position of the string
-	int m_buffer_idx;
+	size_t m_buffer_idx;
 	// header for each line of characters
 	std::vector<StringLineHeader> m_strings_headers;
 
 	size_t GetNewlineBuffer(size_t sourceStringBufferSize, char** outBufferPtr)
 	{
-		if (sourceStringBufferSize > GetLineBufferSize()) 
+		if (sourceStringBufferSize > GetLineBufferSize())
 			return 0; // we cannot copy this string, line buffer too small
 
 		// check if can fit the 'size' in current position remaining buffer
@@ -263,14 +268,14 @@ private:
 			*outBufferPtr = &m_buf[m_buffer_idx * m_line_buf_size];
 			m_buffer_idx++;
 			return sourceStringBufferSize;
-			
+
 		}
 		else
 		{
 			m_buffer_idx = 0;
 
 			// clear string range, otherwise we might leave bad string_positions inside the container
-			for (auto it = m_strings_headers.begin(); it < m_strings_headers.end(); )
+			for (auto it = m_strings_headers.begin(); it != m_strings_headers.end(); )
 			{
 				if (m_buffer_idx == it->idx)
 				{

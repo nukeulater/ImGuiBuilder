@@ -8,8 +8,8 @@ namespace CommandCollection
 	extern std::vector<ConsoleCommand*> commandTable;
 
 	void InsertCommand(ConsoleCommand* newCommand);
-	ConsoleVarCommand* GetVarCommandByName(const std::string& name);
-	void SetVarCommandPtr(const std::string& name, ComVar* varPtr);
+	ConsoleCommand* GetVarCommandByName(const std::string& name);
+	void SetVarCommandPtr(const std::string& name, ComVarBase* varPtr);
 	void InitializeCommandsMap();
 
 	// commands

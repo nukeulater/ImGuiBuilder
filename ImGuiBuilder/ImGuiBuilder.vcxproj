@@ -37,33 +37,33 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='OpenGL2|Win32'">
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='OpenGL2|x64'">
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -208,19 +208,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="imgui_console\ComVar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main\build_config.cpp" />
     <ClCompile Include="Main\imgui_builder.cpp" />
     <ClCompile Include="main\additional.cpp" />
     <ClCompile Include="main\the_window.cpp" />
-    <ClCompile Include="Nuke%27s Stuff\CommandCollection.cpp" />
-    <ClCompile Include="Nuke%27s Stuff\ImGuiConsoleImpl.cpp" />
+    <ClCompile Include="imgui_console\CommandCollection.cpp" />
+    <ClCompile Include="imgui_console\ImGuiConsoleImpl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='OpenGL2|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Nuke%27s Stuff\CommandHandler.cpp" />
+    <ClCompile Include="imgui_console\CommandHandler.cpp" />
     <ClCompile Include="third-party\ImGuiFileDialog\ImGuiFileDialog.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -284,11 +285,11 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Nuke%27s Stuff\CommandCollection.h" />
-    <ClInclude Include="Nuke%27s Stuff\CommandHandler.h" />
-    <ClInclude Include="Nuke%27s Stuff\CommandsUtil.h" />
-    <ClInclude Include="Nuke%27s Stuff\ImGuiConsoleImpl.h" />
-    <ClInclude Include="Nuke%27s Stuff\ComVar.h" />
+    <ClInclude Include="imgui_console\CommandCollection.h" />
+    <ClInclude Include="imgui_console\CommandHandler.h" />
+    <ClInclude Include="imgui_console\CommandsUtil.h" />
+    <ClInclude Include="imgui_console\ImGuiConsoleImpl.h" />
+    <ClInclude Include="imgui_console\ComVar.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="main\build_config.h" />
     <ClInclude Include="Main\imgui_builder.h" />

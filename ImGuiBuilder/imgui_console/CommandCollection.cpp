@@ -48,26 +48,26 @@ void CommandCollection::InsertCommand(ConsoleCommand* newCommand)
 	commandTable.emplace_back(newCommand);
 }
 
-ConsoleVarCommand* CommandCollection::GetVarCommandByName(const std::string& name)
+ConsoleCommand* CommandCollection::GetVarCommandByName(const std::string& name)
 {
 	std::scoped_lock(commandInsertMtx);
 
 	for (auto command : commandTable)
 	{
 		if (!strcmp(name.c_str(), command->GetName()))
-			return dynamic_cast<ConsoleVarCommand*>(command);
+			return command;
 	}
 
 	return nullptr;
 }
 
 // in case your variable needs to be set/updated
-void CommandCollection::SetVarCommandPtr(const std::string& name, ComVar* varPtr)
+void CommandCollection::SetVarCommandPtr(const std::string& name, ComVarBase* varPtr)
 {
-	ConsoleVarCommand* varCmdPtr = GetVarCommandByName(name);
+	ConsoleCommand* varCmdPtr = GetVarCommandByName(name);
 	if (varCmdPtr != nullptr)
 	{
-		varCmdPtr->UpdateVarPtr(varPtr);
+		varCmdPtr->SetCommandVarPtr(varPtr);
 	}
 }
 
@@ -77,22 +77,22 @@ void CommandCollection::SetVarCommandPtr(const std::string& name, ComVar* varPtr
 
 int CommandCollection::BoolVarHandlerCmd(const std::vector<std::string>& tokens, ConsoleCommandCtxData cbData)
 {
-	IOutput* output = (IOutput*)cbData.strOutput;
-	auto var = reinterpret_cast<ComVarTPtr<bool*>*>(cbData.commandVar);
+	TextOutputCb* outputCb = cbData.outputCb;
+	auto booleanCmdVar = cbData.consoleCommand->GetVar<ComVar<bool>>();
 
 	std::string exception;
-	if (!var->SetValFromStr(tokens[1], 10, exception))
+	if (!booleanCmdVar->SetFromStr(tokens[1], exception))
 	{
-		output->Output(StringFlag_None, command_error_bad_arg);
-		output->OutputFmt(StringFlag_None, "	%s", exception.c_str());
+		outputCb(StringFlag_None, command_error_bad_arg);
+		outputCb(StringFlag_None, "	%s", exception.c_str());
 	}
 	return 0;
 }
 
 int CommandCollection::HelpCmd(const std::vector<std::string>& tokens, ConsoleCommandCtxData cbData)
 {
-	IOutput* output = cbData.strOutput;
-	const ConsoleCommand* command_data = cbData.consoleCommandData;
+	TextOutputCb* outputCb = cbData.outputCb;
+	const ConsoleCommand* command_data = cbData.consoleCommand;
 
 	const std::string* commandToHelp = nullptr;
 
@@ -104,7 +104,7 @@ int CommandCollection::HelpCmd(const std::vector<std::string>& tokens, ConsoleCo
 		commandToHelp = &tokens[1];
 
 	if (!singleCommandHelp)
-		output->Output(StringFlag_None, "# available commands: ");
+		outputCb(StringFlag_None, "# available commands: ");
 
 	for (auto command_entry : CommandCollection::commandTable)
 	{
@@ -113,14 +113,14 @@ int CommandCollection::HelpCmd(const std::vector<std::string>& tokens, ConsoleCo
 
 		if (!command_entry->Hidden())
 		{
-			output->OutputFmt(StringFlag_None, "# %s ", command_entry->GetName());
+			outputCb(StringFlag_None, "# %s ", command_entry->GetName());
 			if (command_entry->GetDescription() != NULL)
 			{
-				output->OutputFmt(StringFlag_None, "    # command description: %s", command_entry->GetDescription());
+				outputCb(StringFlag_None, "    # command description: %s", command_entry->GetDescription());
 			}
 			else
 			{
-				output->OutputFmt(StringFlag_None, "	# command has no description");
+				outputCb(StringFlag_None, "	# command has no description");
 			}
 
 			if (singleCommandHelp)
@@ -132,7 +132,7 @@ int CommandCollection::HelpCmd(const std::vector<std::string>& tokens, ConsoleCo
 	}
 
 	if (singleCommandHelp && !singleCommandHelpFound)
-		output->OutputFmt(StringFlag_None, "	# unknown command: %s", commandToHelp->c_str());
+		outputCb(StringFlag_None, "	# unknown command: %s", commandToHelp->c_str());
 
 	return 0;
 }
